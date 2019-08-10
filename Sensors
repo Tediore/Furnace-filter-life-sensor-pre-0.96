@@ -1,0 +1,30 @@
+# Sensor for cooling time since last filter change
+sensor:
+- platform: history_stats
+  name: Cooling since last filter change
+  entity_id: climate.thermostat
+  state: 'cool'
+  type: time
+  start: '{{ (states.variable.furnace_filter.state) }}'
+  end: '{{ now() }}'
+
+
+# Sensor for heating time since last filter change
+sensor:
+- platform: history_stats
+  name: Cooling since last filter change
+  entity_id: climate.thermostat
+  state: 'heat'
+  type: time
+  start: '{{ (states.variable.furnace_filter.state) }}'
+  end: '{{ now() }}'
+
+
+# Furnace filter life sensor
+sensor:
+- platform: template
+  sensors:
+    furnace_filter_life:
+      friendly_name: "Furnace filter life"
+      value_template: '{{ (200 - (states.sensor.cooling_since_last_filter_change.state | float) - (states.sensor.heating_since_last_filter_change.state | float)) | round(0) }}'
+      unit_of_measurement: 'h'
