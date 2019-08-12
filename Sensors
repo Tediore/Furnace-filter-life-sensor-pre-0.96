@@ -28,13 +28,3 @@ sensor:
       friendly_name: "Furnace filter life"
       value_template: '{{ (200 - (states.sensor.cooling_since_last_filter_change.state | float) - (states.sensor.heating_since_last_filter_change.state | float)) | round(0) }}'
       unit_of_measurement: 'h'
-
-
-# Filter change date update script
-furnace_filter_date:
-  alias: Furnace filter change date
-  sequence:
-  - service: variable.set_variable
-    data:
-      variable: furnace_filter
-      value_template: '{{ now() }}'
