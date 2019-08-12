@@ -1,3 +1,7 @@
+##################################################
+##### Sensors for furnace filter life sensor
+##################################################
+
 # Sensor for cooling time since last filter change
 sensor:
 - platform: history_stats
@@ -12,7 +16,7 @@ sensor:
 # Sensor for heating time since last filter change
 sensor:
 - platform: history_stats
-  name: Cooling since last filter change
+  name: Heating since last filter change
   entity_id: climate.thermostat
   state: 'heat'
   type: time
@@ -20,7 +24,7 @@ sensor:
   end: '{{ now() }}'
 
 
-# Furnace filter life sensor
+# Sensor to display remaining filter life in hours
 sensor:
 - platform: template
   sensors:
@@ -28,3 +32,52 @@ sensor:
       friendly_name: "Furnace filter life"
       value_template: '{{ (200 - (states.sensor.cooling_since_last_filter_change.state | float) - (states.sensor.heating_since_last_filter_change.state | float)) | round(0) }}'
       unit_of_measurement: 'h'
+
+
+
+##################################################
+##### Sensors for rolling 7 day average
+##################################################
+
+# Sensor to calculate cooling time for last 7 days
+sensor:
+  - platform: history_stats
+    name: Cooling time last 7 days
+    entity_id: climate.thermostat
+    state: 'cool'
+    type: time
+    end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    duration:
+      days: 7
+
+
+# Sensor to calculate heating time for last 7 days
+sensor:
+  - platform: history_stats
+    name: Heating time last 7 days
+    entity_id: climate.thermostat
+    state: 'heat'
+    type: time
+    end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    duration:
+      days: 7
+
+
+# Sensor to calculate average total runtime in the last 7 days (heating and cooling)
+sensor:
+- platform: template
+  sensors:
+    average_total_runtime_week:
+      friendly_name: "Average total runtime last 7 days"
+      value_template: '{{ (((states.sensor.cooling_time_last_7_days.state | float) + (states.sensor.heating_time_last_7_days.state | float)) / 7) | round(2) }}'
+      unit_of_measurement: 'h'
+
+
+# Sensor to display estimated days until next filter change
+sensor:
+- platform: template
+  sensors:
+    furnace_filter_days_remaining:
+      friendly_name: "Furnace filter days remaining"
+      value_template: '{{ ((states.sensor.furnace_filter_life.state | float) / (states.sensor.average_total_runtime_week.state | float)) | round(0) }}'
+      unit_of_measurement: 'd'
