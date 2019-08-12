@@ -1,0 +1,8 @@
+# Filter change date update script
+furnace_filter_date:
+  alias: Furnace filter change date
+  sequence:
+  - service: variable.set_variable
+    data:
+      variable: furnace_filter
+      value_template: '{{ now() }}'
