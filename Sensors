@@ -23,6 +23,25 @@ sensor:
     start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
     end: "{{ states('variable.furnace_filter') }}"
 
+# Sensor for today's cooling time
+sensor:
+  - platform: history_stats
+    name: Cooling time today
+    entity_id: climate.thermostat
+    state: 'cool'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+# Sensor for today's heating time
+sensor:
+  - platform: history_stats
+    name: Cooling time today
+    entity_id: climate.thermostat
+    state: 'heat'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
 
 # Sensor to display runtime since last filter change
 sensor:
