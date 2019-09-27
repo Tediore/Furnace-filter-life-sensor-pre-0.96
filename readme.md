@@ -1,4 +1,4 @@
-# Furnace filter runtime sensor
+# Furnace filter runtime sensor (pre-0.96)
 
 This project uses the variable custom component, a template sensor, a script, history stats sensors, and an automation to track total HVAC runtime since the furnace filter was last changed. 
 
